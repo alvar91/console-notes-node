@@ -87,7 +87,7 @@ function load(done) {
       const notes = JSON.parse(data);
       done(null, notes);
     } catch (error) {
-      done(new Error('Не удалось преобразовать данные'));
+      done(new Error("Не удалось преобразовать данные"));
     }
   });
 }
