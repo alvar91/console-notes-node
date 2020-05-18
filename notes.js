@@ -21,14 +21,18 @@ switch (command) {
     });
     break;
   case "create":
-    create(title, content, error => {
-        if (error) return console.error(error.message);
+    create(title, content, (error) => {
+      if (error) return console.error(error.message);
 
-        console.log('Заметка создана');
+      console.log("Заметка создана");
     });
     break;
   case "remove":
-    remove();
+    remove(title, (error) => {
+      if (error) return console.error(error.message);
+
+      console.log("Заметка удалена");
+    });
     break;
   default:
     console.log("Неизвестная команда");
@@ -56,17 +60,33 @@ function view(title, done) {
 }
 
 function create(title, content, done) {
-    fs.readFile("notes.json", (error, data) => {
-        if (error) return done(error);
-    
-        const notes = JSON.parse(data);
-        notes.push({title, content});
+  fs.readFile("notes.json", (error, data) => {
+    if (error) return done(error);
 
-        const json = JSON.stringify(notes);
-        fs.writeFile('notes.json', json, error => {
-            if (error) return done(error);
+    const notes = JSON.parse(data);
+    notes.push({ title, content });
 
-            done();
-        });
-      });
+    const json = JSON.stringify(notes);
+    fs.writeFile("notes.json", json, (error) => {
+      if (error) return done(error);
+
+      done();
+    });
+  });
+}
+
+function remove(title, done) {
+  fs.readFile("notes.json", (error, data) => {
+    if (error) return done(error);
+
+    let notes = JSON.parse(data);
+    notes = notes.filter((note) => note.title !== title);
+
+    const json = JSON.stringify(notes);
+    fs.writeFile("notes.json", json, (error) => {
+      if (error) return done(error);
+
+      done();
+    });
+  });
 }
