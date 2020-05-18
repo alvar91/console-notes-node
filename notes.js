@@ -21,7 +21,11 @@ switch (command) {
     });
     break;
   case "create":
-    create();
+    create(title, content, error => {
+        if (error) return console.error(error.message);
+
+        console.log('Заметка создана');
+    });
     break;
   case "remove":
     remove();
@@ -49,4 +53,20 @@ function view(title, done) {
     if (!note) return done(new Error("Заметка не найдена"));
     done(null, note);
   });
+}
+
+function create(title, content, done) {
+    fs.readFile("notes.json", (error, data) => {
+        if (error) return done(error);
+    
+        const notes = JSON.parse(data);
+        notes.push({title, content});
+
+        const json = JSON.stringify(notes);
+        fs.writeFile('notes.json', json, error => {
+            if (error) return done(error);
+
+            done();
+        });
+      });
 }
